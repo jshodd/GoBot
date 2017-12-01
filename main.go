@@ -3,14 +3,14 @@ package main
 import (
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
+	//	"fmt"
 	"github.com/eawsy/aws-lambda-go-core/service/lambda/runtime"
 	"strings"
 )
 
 type Response struct {
-	StatusCode string            `json:"statusCode"`
-	Body       Message           `json:"body"`
+	StatusCode int               `json:"statusCode"`
+	Body       string            `json:"body"`
 	Headers    map[string]string `json:"headers"`
 }
 
@@ -86,11 +86,8 @@ func Handle(evt json.RawMessage, ctx *runtime.Context) (interface{}, error) {
 	info := toInfo(request.Body)
 	headers := map[string]string{"Content-Type": "application/json"}
 	message := Message{ResponseType: "ephemeral", Text: info.Text}
-	result, err := json.Marshal(Response{StatusCode: "200", Body: message, Headers: headers})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("sending response: \n", string(result))
-	return string(result), nil
+	result := Response{StatusCode: 200, Body: "{'response_type': '" + message.ResponseType + "', 'text': '" + message.Text + "'}", Headers: headers}
+	//fmt.Println("sending response: \n", string(result))
+	return result, nil
 
 }
